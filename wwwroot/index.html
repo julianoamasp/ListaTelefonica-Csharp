@@ -65,7 +65,11 @@
         padding: 6px;
         width: 100%;
     }
-
+    .lista-container-tabela {
+    max-height: 244px;
+    overflow: auto;
+    margin-right: 10px;
+}
     .lista-container-tabela td {
         padding: 10px;
     }
@@ -78,6 +82,9 @@
     .lista-container-tabela tr:hover {
         padding: 10px;
         background-color: azure;
+    }
+    th button{
+        background: none;border: none;cursor: pointer;
     }
 </style>
 
@@ -92,15 +99,44 @@
             <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
             <script type="text/babel">
-
+var teste;
                 class Linhaitem extends React.Component {
                     constructor(props) {
                         super(props);
+  
+                    this.state = {id:0,nome:"",endereco:"",email:""};
+
+                        this.handleChange = this.handleChange.bind(this);
+                    }
+          
+                    handleChange(event) {
+                        console.log(event);
+                        teste = event;
+                        teste.target.getAttribute("id")
+                        switch (event.target.getAttribute("id")) {
+                            case "editarInputNome":
+                                this.setState({nome:event.target.value + event.nativeEvent.data})
+                                break;
+                        }
+                        /*
+                        this.setState({
+                            id: document.querySelector("#editarInputNome").value,
+                            nome: document.querySelector("#editarInputId").value,
+                            telefone: document.querySelector("#editarInputTelefone").value,
+                            endereco: document.querySelector("#editarInputEndereco").value,
+                            email: document.querySelector("#editarInputEmail").value
+                        });
+                        */
                     }
                     render() {
                         const contatos = [];
+                        let id
                                 for (let index = 0; index < this.props.contatos.length; index++) {
-                                    contatos.push(<tr><td>{this.props.contatos[index].id}</td><td>{this.props.contatos[index].nome}</td><td>{this.props.contatos[index].telefone}</td><td>{this.props.contatos[index].endereco}</td><td>{this.props.contatos[index].email}</td><td><button><i class="fa fa-edit"></i></button><button onClick={(e) => this.props.remover(index,this.props.contatos[index].id)}><i class="fa fa-trash-o"></i></button></td></tr>);
+                                    if(this.props.contatos[index].editando != null && this.props.contatos[index].editando == true){
+                                    contatos.push(<tr><td><input type="hidden" value={this.props.contatos[index].id} id="editarInputId"  /></td><td><input type="text" onChange={this.handleChange} id="editarInputNome" value={this.props.contatos[index].nome} /></td><td><input onChange={this.handleChange} type="text" id="editarInputTelefone" value={this.props.contatos[index].telefone} /></td><td><input type="text" onChange={this.handleChange} id="editarInputEndereco" value={this.props.contatos[index].endereco} /></td><td><input type="text" onChange={this.handleChange} id="editarInputEmail" value={this.props.contatos[index].email} /></td><td><button onClick={(e) => this.props.editar(index,this.props.contatos[index].id,"SALVAR")}><i class="fa fa-check"></i></button><button onClick={(e) => this.props.editar(index,this.props.contatos[index].id,"FECHAR")}><i class="fa fa-close"></i></button></td></tr>);
+                                    }else{
+                                        contatos.push(<tr><td>{this.props.contatos[index].id}</td><td>{this.props.contatos[index].nome}</td><td>{this.props.contatos[index].telefone}</td><td>{this.props.contatos[index].endereco}</td><td>{this.props.contatos[index].email}</td><td><button onClick={(e) => this.props.editar(index,this.props.contatos[index].id,"EDITAR")}><i class="fa fa-edit"></i></button><button onClick={(e) => this.props.remover(index,this.props.contatos[index].id)}><i class="fa fa-trash-o"></i></button></td></tr>);
+                                    }
                                     //contatos.push(<Submenu metodoMudar={this.mudarPaginaAtual} link={this.props.contatos[index]} />);
                                 }
                         return (
@@ -131,7 +167,7 @@
                                     <input type="text" placeholder="Email" id="emailInputAdd" />
                                 </div>
                                 <div>
-                                    <button onClick={this.props.adicionar}>Salvar</button>
+                                    <button onClick={this.props.adicionar}>Adicionar</button>
                                 </div>
                             </div>
                         )
@@ -141,15 +177,24 @@
                 class Aplicacao extends React.Component {
                     constructor(props) {
                         super(props);
-                        this.state = { contatos: [
-                            {id:1,nome:"juliano",telefone:"(11) 0984-34433",endereco:"AV Paulista, 1200",email:"juliano@gmail.com"},
-                            {id:2,nome:"Ana",telefone:"(11) 0984-34433",endereco:"AV Paulista, 1200",email:"ana@gmail.com"},
-                            {id:3,nome:"Fernanda",telefone:"(11) 0984-34433",endereco:"AV Paulista, 1200",email:"fernanda@gmail.com"},
-                            {id:4,nome:"Kananda",telefone:"(11) 0984-34433",endereco:"AV Paulista, 1200",email:"kananda@gmail.com"},
-                            {id:5,nome:"Mario",telefone:"(11) 0984-34433",endereco:"AV Paulista, 1200",email:"mario@gmail.com"},
-                        ] };
+                        this.state = { contatos: [] };
                         this.adicionar = this.adicionar.bind(this);
                         this.remover = this.remover.bind(this);
+                        this.editar = this.editar.bind(this);
+                    }
+                    retornoAdicionar(r){
+                        if(typeof r != "undefined"){
+                            try {                            
+                        let jsonres = JSON.parse(r);
+                        if(jsonres.id != 0){
+                        let arr = this.state.contatos;
+                        arr.push({id:jsonres.id,nome:jsonres.nome,telefone:jsonres.telefone,endereco:jsonres.endereco,email:jsonres.email});
+                        this.setState({contatos:arr});
+                        nome:document.getElementById("nomeInputAdd").value = "";document.getElementById("telefoneInputAdd").value = "";endereco:document.getElementById("enderecoInputAdd").value = "";email:document.getElementById("emailInputAdd").value = "";
+                        alert("Adicionado com sucesso, nome: "+jsonres.nome+", telefone: "+jsonres.telefone+", endereco: "+jsonres.endereco+", email: "+jsonres.email+"");
+                    }
+                    } catch (error) {alert("erro: "+error)}
+                        }
                     }
                     adicionar(){
                         if(
@@ -158,22 +203,96 @@
                         document.getElementById("enderecoInputAdd").value != "" &&
                         document.getElementById("emailInputAdd").value != ""
                         ){
-                        let arr = this.state.contatos;
-                        arr.push({id:5,nome:document.getElementById("nomeInputAdd").value,telefone:document.getElementById("telefoneInputAdd").value,endereco:document.getElementById("enderecoInputAdd").value,email:document.getElementById("emailInputAdd").value});
-                        document.getElementById("nomeInputAdd").value = "";
-                        document.getElementById("telefoneInputAdd").value = "";
-                        document.getElementById("enderecoInputAdd").value = "";
-                        document.getElementById("emailInputAdd").value = "";
-                        this.setState({contatos:arr});
+                            let retornoAdicionar = this.retornoAdicionar();
+
+                            var myHeaders = new Headers();
+                            myHeaders.append("Content-Type", "application/json");
+                            var data = JSON.stringify({
+                                "nome": document.getElementById("nomeInputAdd").value,
+                                "telefone": document.getElementById("telefoneInputAdd").value,
+                                "endereco": document.getElementById("enderecoInputAdd").value,
+                                "email": document.getElementById("emailInputAdd").value
+                                });
+
+                                var requestOptions = {
+                                method: 'POST',
+                                headers: myHeaders,
+                                body: data,
+                                redirect: 'follow'
+                                };
+
+                                fetch("https://localhost:44329/api/contatoes", requestOptions)
+                                .then(response => response.text())
+                                .then(result => this.retornoAdicionar(result))
+                                .catch(error => console.log('error', error));
                         }else{
                             alert("Preencha todos os campos!");
                         }
                     }
+                    removerRetorno(response,id){
+                        console.log(response);
+                        if(response.ok) {
+                            let arr = this.state.contatos;
+                            arr.splice(id,1);
+                            this.setState({contatos:arr});
+                            alert(id+" apagado");
+                        }
+                    }
                     remover(index,id){
+                        var requestOptions = {
+                        method: 'DELETE',
+                        redirect: 'follow'
+                        };
+                        fetch("https://localhost:44329/api/contatoes/"+id, requestOptions)
+                        .then(response => this.removerRetorno(response,index));
+                    }
+                    editar(index,id,a){
                         let arr = this.state.contatos;
-                        arr.splice(index,1);
-                        this.setState({contatos:arr});
-                        console.log(index+" - "+id);
+                        switch (a) {
+                            case "SALVAR":
+                            
+                            var myHeaders = new Headers();
+                            myHeaders.append("Content-Type", "application/json");
+
+                            var raw = JSON.stringify({
+                            "id": id,
+                            "nome": document.querySelector("#editarInputNome").value,
+                            "telefone": document.querySelector("#editarInputTelefone").value,
+                            "endereco": document.querySelector("#editarInputEndereco").value,
+                            "email": document.querySelector("#editarInputEmail").value
+                            });
+
+                            var requestOptions = {
+                            method: 'PUT',
+                            headers: myHeaders,
+                            body: raw,
+                            redirect: 'follow'
+                            };
+
+                            fetch("https://localhost:44329/api/contatoes/"+id, requestOptions)
+                            .then(response => response.text())
+
+                                break;
+                                case "EDITAR":
+                                for(let i = 0; i < arr.length;i++){
+                                    arr[i].editando = false;
+                                }
+                                for(let i = 0; i < arr.length;i++){
+                                    if(index == i){
+                                        arr[i].editando = true;
+                                    }
+                                }
+                                this.setState({contatos:arr});
+                                break;
+                                case "FECHAR":
+                                for(let i = 0; i < arr.length;i++){
+                                    arr[i].editando = false;
+                                }
+                                this.setState({contatos:arr});
+                                break;
+
+                        }
+
                     }
                     render() {
                         return (
@@ -185,16 +304,17 @@
                                     <div class="lista-container-tabela">
                                         <table width="100%">
                                             <tr>
-                                                <th>id</th>
-                                                <th>nome</th>
-                                                <th>telefone</th>
-                                                <th>endereço</th>
-                                                <th>email</th>
-                                                <th>ações</th>
+                                                <th>id<button><i class="fa fa-arrows-v"></i></button></th>
+                                                <th>nome<button><i class="fa fa-arrows-v"></i></button></th>
+                                                <th>telefone<button><i class="fa fa-arrows-v"></i></button></th>
+                                                <th>endereço<button><i class="fa fa-arrows-v"></i></button></th>
+                                                <th>email<button><i class="fa fa-arrows-v"></i></button></th>
+                                                <th>ações<button><i class="fa fa-arrows-v"></i></button></th>
                                             </tr>
 
                                                 <Linhaitem 
                                                 remover={this.remover} 
+                                                editar={this.editar} 
                                                 contatos={this.state.contatos} 
                                                 />
 
