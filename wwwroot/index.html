@@ -19,634 +19,352 @@
         overflow: hidden;
     }
 
-    .lista {
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        background-color: azure;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
 
-    .lista-card {
-        width: 80%;
-        background-color: #ffffff;
-        border-radius: 3px;
-        box-shadow: 1px 1px 1px 1px #b3b3b366;
-        padding: 0px 10px;
-    }
 
-    .lista-card>div {
-        margin: 10px 0px;
+    .todos-titulo {
+        padding: 10px;
+        background-color: #9e9e9e;
+        font-size: 15vw;
+        font-weight: bold;
         text-align: center;
+        color: #ffff;
     }
 
-    .lista-container {
-        display: grid;
-        grid-template-columns: 80% 20%;
+    .todos-adicionar {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
     }
 
-    h1 {
-        color: #535353;
-        letter-spacing: 3px;
+    .todos-adicionar {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        font-size: 20vw;
+        border-radius: 100%;
+        padding: 0px 20px;
     }
 
-    .titulo {
-        border-bottom: 1px solid #d7d7d7;
+    .todos-tabela table {
+        padding: 20px;
     }
 
-    .lista-container-adicao-container>div {
-        margin: 10px 0px;
-    }
-
-    .lista-container-adicao-container input,
-    .lista-container-adicao-container button {
-        padding: 6px;
-        width: 100%;
-    }
-    .lista-container-tabela {
-    max-height: 244px;
-    overflow: auto;
-    margin-right: 10px;
-}
-    .lista-container-tabela td {
-        padding: 10px;
-    }
-
-    .lista-container-tabela button {
+    .todos-tabela td {
         padding: 5px;
-        margin: 0px 3px;
+        font-size: 25px;
     }
 
-    .lista-container-tabela tr:hover {
-        padding: 10px;
-        background-color: azure;
+    .todos-tabela tr {
+        border-bottom: 1px solid black;
     }
-    th button{
-        background: none;border: none;cursor: pointer;
+
+    .todos-tabela td button {
+        font-size: 20px;
+        background-color: #f0f8ff00;
+        border: none;
     }
+
+    .acao-formulario {
+        padding: 20px;
+    }
+
+        .acao-formulario input {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0px;
+        }
+
+        .acao-formulario button {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0px;
+        }
+
+        .acao-formulario p {
+            font-size: 24px;
+            text-align: center;
+            margin: 10px 0px;
+        }
 </style>
 
 <body>
-    <div class="lista">
-        
+
+    <div id="app" style="
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: auto;
+">
+
+
+
+
+
     </div>
 
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-            <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-            <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-            <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-
-            <script type="text/babel">
-var teste;
-                class Linhaitem extends React.Component {
+    <script type="text/babel">
+        var path = location.href + "api/Contatoes";
+                class Exibir extends React.Component {
                     constructor(props) {
                         super(props);
-  
-                    this.state = {id:0,nome:"",endereco:"",email:""};
-
-                        this.handleChange = this.handleChange.bind(this);
                     }
-          
-                    handleChange(event) {
-                        console.log(event);
-                        teste = event;
-                        teste.target.getAttribute("id")
-                        switch (event.target.getAttribute("id")) {
-                            case "editarInputNome":
-                                this.setState({nome:event.target.value + event.nativeEvent.data})
-                                break;
+                    render() {
+                        let text = [];
+                        if (this.props.contatos.length > 0) {
+                            for (let x = 0; x < this.props.contatos.length; x++) {
+                                text.push(<tr>
+                                    <td onClick={this.props.mudarPagina.bind(event, "detalhes", this.props.contatos[x].id)}>{this.props.contatos[x].nome}</td>
+                                    <td><button onClick={this.props.mudarPagina.bind(event, "detalhes", this.props.contatos[x].id)}><i class="fa fa-edit"></i></button></td>
+                                </tr>);
+                            }
+                        } else {
+                            text.push("Sem registros");
                         }
-                        /*
-                        this.setState({
-                            id: document.querySelector("#editarInputNome").value,
-                            nome: document.querySelector("#editarInputId").value,
-                            telefone: document.querySelector("#editarInputTelefone").value,
-                            endereco: document.querySelector("#editarInputEndereco").value,
-                            email: document.querySelector("#editarInputEmail").value
-                        });
-                        */
-                    }
-                    render() {
-                        const contatos = [];
-                        let id
-                                for (let index = 0; index < this.props.contatos.length; index++) {
-                                    if(this.props.contatos[index].editando != null && this.props.contatos[index].editando == true){
-                                    contatos.push(<tr><td><input type="hidden" value={this.props.contatos[index].id} id="editarInputId"  /></td><td><input type="text" onChange={this.handleChange} id="editarInputNome" value={this.props.contatos[index].nome} /></td><td><input onChange={this.handleChange} type="text" id="editarInputTelefone" value={this.props.contatos[index].telefone} /></td><td><input type="text" onChange={this.handleChange} id="editarInputEndereco" value={this.props.contatos[index].endereco} /></td><td><input type="text" onChange={this.handleChange} id="editarInputEmail" value={this.props.contatos[index].email} /></td><td><button onClick={(e) => this.props.editar(index,this.props.contatos[index].id,"SALVAR")}><i class="fa fa-check"></i></button><button onClick={(e) => this.props.editar(index,this.props.contatos[index].id,"FECHAR")}><i class="fa fa-close"></i></button></td></tr>);
-                                    }else{
-                                        contatos.push(<tr><td>{this.props.contatos[index].id}</td><td>{this.props.contatos[index].nome}</td><td>{this.props.contatos[index].telefone}</td><td>{this.props.contatos[index].endereco}</td><td>{this.props.contatos[index].email}</td><td><button onClick={(e) => this.props.editar(index,this.props.contatos[index].id,"EDITAR")}><i class="fa fa-edit"></i></button><button onClick={(e) => this.props.remover(index,this.props.contatos[index].id)}><i class="fa fa-trash-o"></i></button></td></tr>);
-                                    }
-                                    //contatos.push(<Submenu metodoMudar={this.mudarPaginaAtual} link={this.props.contatos[index]} />);
-                                }
                         return (
-                            contatos
-                        )
-                    }
-                }
-                class Adicionaritem extends React.Component {
-                    constructor(props) {
-                        super(props);
-                    }
-                    render() {
-                        return (
-                            <div class="lista-container-adicao-container">
-                                <div>
-                                    <p>Adicionar novo contato</p>
-                                </div>
-                                <div>
-                                    <input type="text" placeholder="Nome" id="nomeInputAdd" />
-                                </div>
-                                <div>
-                                    <input type="text" placeholder="Telefone" id="telefoneInputAdd" />
-                                </div>
-                                <div>
-                                    <input type="text" placeholder="Endereço" id="enderecoInputAdd" />
-                                </div>
-                                <div>
-                                    <input type="text" placeholder="Email" id="emailInputAdd" />
-                                </div>
-                                <div>
-                                    <button onClick={this.props.adicionar}>Adicionar</button>
+                            <div class="todos">
+                                <button class="todos-adicionar" onClick={this.props.mudarPagina.bind(event, "adicionar")}>+</button>
+                                <div class="todos-titulo">Contatos</div>
+                                <div class="todos-tabela">
+                                    <table width="100%">
+                                        {text}
+                                    </table>
                                 </div>
                             </div>
                         )
                     }
                 }
-
-                class Aplicacao extends React.Component {
+                class Acao extends React.Component {
                     constructor(props) {
                         super(props);
-                        this.state = { contatos: [] };
-                        this.adicionar = this.adicionar.bind(this);
+                    }
+                    render() {
+                        const view = [];
+                        if (this.props.acao == "detalhes") {
+                            view.push(<div class="acao">
+                                <div class="todos-titulo">Contato</div>
+
+                                <div class="acao-formulario">
+                                    <p>Vizualize ou edite seu contato</p>
+                                    <div>
+                                        <input type="hidden" id="editInputId" placeholder="Nome" value={this.props.contato.id} />
+                                        <input type="text" id="editInputNome" onChange={this.props.mudarAtributoEdicao.bind(event, "nome")} value={this.props.contato.nome} />
+                                    </div>
+                                    <div>
+                                        <input type="text" id="editInputTelefone" onChange={this.props.mudarAtributoEdicao.bind(event, "nome")} value={this.props.contato.telefone} />
+                                    </div>
+                                    <div>
+                                        <input type="text" id="editInputEndereco" onChange={this.props.mudarAtributoEdicao.bind(event, "nome")} value={this.props.contato.endereco} />
+                                    </div>
+                                    <div>
+                                        <input type="text" id="editInputEmail" onChange={this.props.mudarAtributoEdicao.bind(event, "nome")} value={this.props.contato.email} />
+                                    </div>
+                                    <div>
+                                        <button onClick={this.props.salvarEdicao.bind(event, this.props.contato.id)}>Salvar</button>
+                                    </div>
+                                    <div>
+                                        <button onClick={this.props.remover.bind(event, this.props.contato.id)}>remover</button>
+                                    </div>
+                                    <div>
+                                        <button onClick={this.props.mudarPagina.bind(event, "exibir")}>Voltar</button>
+                                    </div>
+                                </div>
+                            </div>);
+                        } else {
+                            view.push(<div class="acao">
+                                <div class="todos-titulo">Contato</div>
+
+                                <div class="acao-formulario">
+                                    <p>Adicione um novo contato</p>
+                                    <div>
+                                        <input type="text" id="inputAdicionarNome" placeholder="Nome" />
+                                    </div>
+                                    <div>
+                                        <input type="text" id="inputAdicionarTelefone" placeholder="Telefone" />
+                                    </div>
+                                    <div>
+                                        <input type="text" id="inputAdicionarEndereco" placeholder="Endereço" />
+                                    </div>
+                                    <div>
+                                        <input type="text" id="inputAdicionarEmail" placeholder="Email" />
+                                    </div>
+                                    <div>
+                                        <button onClick={this.props.adicionarNovo.bind()}>Salvar</button>
+                                    </div>
+                                    <div>
+                                        <button onClick={this.props.mudarPagina.bind(event, "exibir")}>Voltar</button>
+                                    </div>
+                                </div>
+                            </div>);
+                        }
+                        return (
+                            view
+                        )
+                    }
+                }
+                class App extends React.Component {
+                    constructor(props) {
+                        super(props);
+                        this.state = {
+                            acao: "exibir",
+                            loading: false,
+                            contato: { id: 1, nome: "edita nome", telefone: "edita tel", endereco: "edita end", email: "edita email" },
+                            contatos: []
+                        };
+                        this.mudarPagina = this.mudarPagina.bind(this);
+                        this.mudarAtributoEdicao = this.mudarAtributoEdicao.bind(this);
                         this.remover = this.remover.bind(this);
-                        this.editar = this.editar.bind(this);
+                        this.salvarEdicao = this.salvarEdicao.bind(this);
+                        this.adicionarNovo = this.adicionarNovo.bind(this);
                     }
-                    retornoAdicionar(r){
-                        if(typeof r != "undefined"){
-                            try {                            
-                        let jsonres = JSON.parse(r);
-                        if(jsonres.id != 0){
+                    componentDidMount() {
+                        this.atualizarContatosLista();
+          }
+                    mudarPagina(pagina, id) {
                         let arr = this.state.contatos;
-                        arr.push({id:jsonres.id,nome:jsonres.nome,telefone:jsonres.telefone,endereco:jsonres.endereco,email:jsonres.email});
-                        this.setState({contatos:arr});
-                        nome:document.getElementById("nomeInputAdd").value = "";document.getElementById("telefoneInputAdd").value = "";endereco:document.getElementById("enderecoInputAdd").value = "";email:document.getElementById("emailInputAdd").value = "";
-                        alert("Adicionado com sucesso, nome: "+jsonres.nome+", telefone: "+jsonres.telefone+", endereco: "+jsonres.endereco+", email: "+jsonres.email+"");
-                    }
-                    } catch (error) {alert("erro: "+error)}
+                        this.setState({ acao: pagina });
+                        switch (pagina) {
+                            case "exibir":
+                            this.atualizarContatosLista();
+                            break;
+                            case "detalhes":
+                                for (let i = 0; i < arr.length; i++) {
+                                    if (arr[i].id == id) {
+                                        this.setState({ contato: arr[i] });
+                                        break;
+                                    }
+                                }
+                                break;
                         }
                     }
-                    adicionar(){
-                        if(
-                        document.getElementById("nomeInputAdd").value != "" &&
-                        document.getElementById("telefoneInputAdd").value != "" &&
-                        document.getElementById("enderecoInputAdd").value != "" &&
-                        document.getElementById("emailInputAdd").value != ""
-                        ){
-                            let retornoAdicionar = this.retornoAdicionar();
+                    adicionarNovo(){
+                        var myHeaders = new Headers();
+                        myHeaders.append("Content-Type", "application/json");
 
-                            var myHeaders = new Headers();
-                            myHeaders.append("Content-Type", "application/json");
-                            var data = JSON.stringify({
-                                "nome": document.getElementById("nomeInputAdd").value,
-                                "telefone": document.getElementById("telefoneInputAdd").value,
-                                "endereco": document.getElementById("enderecoInputAdd").value,
-                                "email": document.getElementById("emailInputAdd").value
-                                });
+                        var raw = JSON.stringify({
+                        "nome": document.querySelector("#inputAdicionarNome").value,
+                        "telefone": document.querySelector("#inputAdicionarTelefone").value,
+                        "endereco": document.querySelector("#inputAdicionarEndereco").value,
+                        "email": document.querySelector("#inputAdicionarEmail").value
+                        });
 
-                                var requestOptions = {
-                                method: 'POST',
-                                headers: myHeaders,
-                                body: data,
-                                redirect: 'follow'
-                                };
-
-                                fetch("https://localhost:44329/api/contatoes", requestOptions)
-                                .then(response => response.text())
-                                .then(result => this.retornoAdicionar(result))
-                                .catch(error => console.log('error', error));
-                        }else{
-                            alert("Preencha todos os campos!");
-                        }
-                    }
-                    removerRetorno(response,id){
-                        console.log(response);
-                        if(response.ok) {
-                            let arr = this.state.contatos;
-                            arr.splice(id,1);
-                            this.setState({contatos:arr});
-                            alert(id+" apagado");
-                        }
-                    }
-                    remover(index,id){
                         var requestOptions = {
-                        method: 'DELETE',
+                        method: 'POST',
+                        headers: myHeaders,
+                        body: raw,
                         redirect: 'follow'
                         };
-                        fetch("https://localhost:44329/api/contatoes/"+id, requestOptions)
-                        .then(response => this.removerRetorno(response,index));
+
+                        fetch(path, requestOptions)
+                        .then(response => response.text())
+                        .then(result => console.log(result))
+                        .catch(error => console.log('error', error));
+                        this.mudarPagina("exibir");
                     }
-                    editar(index,id,a){
-                        let arr = this.state.contatos;
-                        switch (a) {
-                            case "SALVAR":
-                            
-                            var myHeaders = new Headers();
-                            myHeaders.append("Content-Type", "application/json");
+                    atualizarContatosLista() {
 
-                            var raw = JSON.stringify({
-                            "id": id,
-                            "nome": document.querySelector("#editarInputNome").value,
-                            "telefone": document.querySelector("#editarInputTelefone").value,
-                            "endereco": document.querySelector("#editarInputEndereco").value,
-                            "email": document.querySelector("#editarInputEmail").value
-                            });
-
-                            var requestOptions = {
-                            method: 'PUT',
-                            headers: myHeaders,
-                            body: raw,
+                        var requestOptions = {
+                            method: 'GET',
                             redirect: 'follow'
-                            };
+                        };
 
-                            fetch("https://localhost:44329/api/contatoes/"+id, requestOptions)
+                        fetch(path, requestOptions)
                             .then(response => response.text())
+                            .then(result => this.setState({contatos:JSON.parse(result)}))
+                            .catch(error => console.log('error', error));
+                    }
+                    salvarEdicao(evento, atributo) {
 
-                                break;
-                                case "EDITAR":
-                                for(let i = 0; i < arr.length;i++){
-                                    arr[i].editando = false;
-                                }
-                                for(let i = 0; i < arr.length;i++){
-                                    if(index == i){
-                                        arr[i].editando = true;
-                                    }
-                                }
-                                this.setState({contatos:arr});
-                                break;
-                                case "FECHAR":
-                                for(let i = 0; i < arr.length;i++){
-                                    arr[i].editando = false;
-                                }
-                                this.setState({contatos:arr});
-                                break;
+                        var myHeaders = new Headers();
+                        myHeaders.append("Content-Type", "application/json");
 
-                        }
+                        var raw = JSON.stringify({
+                        "ID": document.querySelector("#editInputId").value,
+                        "nome": document.querySelector("#editInputNome").value,
+                        "telefone": document.querySelector("#editInputTelefone").value,
+                        "endereco": document.querySelector("#editInputEndereco").value,
+                        "email": document.querySelector("#editInputEmail").value
+                        });
 
+                        var requestOptions = {
+                        method: 'PUT',
+                        headers: myHeaders,
+                        body: raw,
+                        redirect: 'follow'
+                        };
+
+                        fetch(path+"/"+document.querySelector("#editInputId").value, requestOptions)
+                        .then(response => response.text())
+                        .then(result => console.log(result))
+                        .catch(error => console.log('error', error));
+
+                        this.mudarPagina("exibir");
+                    }
+                    mudarAtributoEdicao(atributo, evento) {
+                        this.setState({ contato: { atributo: evento.nativeEvent.data } });
+                    }
+                    remover(evento, atributo) {
+                        let arr = this.state.contatos;
+                        var myHeaders = new Headers();
+                        myHeaders.append("Content-Type", "application/json");
+
+                        var raw = JSON.stringify({
+                        "ID": evento
+                        });
+
+                        var requestOptions = {
+                        method: 'DELETE',
+                        headers: myHeaders,
+                        body: raw,
+                        redirect: 'follow'
+                        };
+
+                        fetch(path+"/"+evento, requestOptions)
+                        .then(response => response.text())
+                        .then(result => console.log(result))
+                        .catch(error => console.log('error', error));
+                        this.mudarPagina("exibir");
                     }
                     render() {
+                        let view;
+                        if (this.state.acao == "exibir") {
+                            view = <Exibir
+                                mudarPagina={this.mudarPagina}
+                                contatos={this.state.contatos}
+                            />;
+                        } else if (this.state.acao == "adicionar") {
+                            view = <Acao
+                                mudarPagina={this.mudarPagina}
+                                adicionarNovo={this.adicionarNovo}
+                            />;
+                        } else if (this.state.acao == "detalhes") {
+                            view = <Acao
+                                acao={this.state.acao}
+                                mudarPagina={this.mudarPagina}
+                                contato={this.state.contato}
+                                mudarAtributoEdicao={this.mudarAtributoEdicao}
+                                remover={this.remover}
+                                salvarEdicao={this.salvarEdicao}
+                            />;
+                        }
                         return (
-                            <div class="lista-card">
-                                <div class="titulo">
-                                    <h1>Lista telefônica</h1>
-                                </div>
-                                <div class="lista-container">
-                                    <div class="lista-container-tabela">
-                                        <table width="100%">
-                                            <tr>
-                                                <th>id<button><i class="fa fa-arrows-v"></i></button></th>
-                                                <th>nome<button><i class="fa fa-arrows-v"></i></button></th>
-                                                <th>telefone<button><i class="fa fa-arrows-v"></i></button></th>
-                                                <th>endereço<button><i class="fa fa-arrows-v"></i></button></th>
-                                                <th>email<button><i class="fa fa-arrows-v"></i></button></th>
-                                                <th>ações<button><i class="fa fa-arrows-v"></i></button></th>
-                                            </tr>
-
-                                                <Linhaitem 
-                                                remover={this.remover} 
-                                                editar={this.editar} 
-                                                contatos={this.state.contatos} 
-                                                />
-
-                                        </table>
-                                    </div>
-                                    <div class="lista-container-adicao">
-                                        <Adicionaritem adicionar={this.adicionar} />
-                                    </div>
-                                </div>
+                            <div>
+                                {view}
                             </div>
-     
                         )
                     }
                 }
 
                 ReactDOM.render(
-                    <Aplicacao />,
-                    document.querySelector('.lista')
+                    <App />,
+                    document.getElementById('app')
                 );
 
 
-
-
-                /*
-                    function formularioDataToJson(arr){
-                        var corpo = "{";
-                        let cont = 0;
-                        let tamanho = 0;
-                        arr.forEach(verTamanho);
-                        arr.forEach(myFunction);
-    
-                        function verTamanho(value, index, array) {
-                            tamanho++;
-                        }
-                        function myFunction(value, index, array) {
-                            corpo += '"'+index+'":"'+value+'"';
-                        if(cont != (tamanho - 1)){corpo += ",";}
-                            cont++
-                        }
-                        corpo += "}";
-                        return corpo;
-                    }
-    
-    
-                        class App extends React.Component {
-                            constructor(props) {
-                                super(props);
-                                this.state = {
-                                    contador: 0,
-                                    usuario:{nome:"Juliano da Silva",email:"",chave:"",foto:"https://loteria.julianoamasp.com/api/fotos/foto.png",logado : false},
-                                    controlePaginas:{anterior:"",atual:"home"},
-                                    menuLateral:{aberto:true},
-                                    paginas:["home","lista"]
-                                };
-                                this.atualizar = this.atualizar.bind(this);
-                                this.setarPaginaAtual = this.setarPaginaAtual.bind(this);
-                                this.logarUsuario = this.logarUsuario.bind(this);
-                            }
-                            componentDidMount() {
-                                this.temporizadorChave = setInterval(function(){
-                                    let locationJson = JSON.parse(localStorage.getItem("usuario"));
-                                const xhttpChave = new XMLHttpRequest();
-                                xhttpChave.onload = function() {
-                                    console.log(this.responseText);
-                                }
-                                xhttpChave.open("POST", "https://loteria.julianoamasp.com/api/validarchave");
-                                xhttpChave.setRequestHeader("Chave", locationJson.chave);
-                                xhttpChave.setRequestHeader("email", locationJson.email);
-                                xhttpChave.send();
-                                },3000);
-                            }
-                            componentWillUnmount() {
-                                clearInterval(this.temporizadorChave);
-                            }
-                            atualizar(){
-                                console.log("atualizado");
-                            }
-                            logarUsuario(usuario){
-                                let usuarioJson = JSON.parse(usuario);
-                                this.setState({usuario:{nome:usuarioJson.nome,email:usuarioJson.email,chave:usuarioJson.chave,logado:true}});
-                            }
-                            setarPaginaAtual(pagina){
-                                this.setState({controlePaginas:{atual : pagina}});
-                            }
-                            render() {
-                                const controlePaginas = this.state.controlePaginas;
-                                return (
-                                        <Pagina refreshDados={this.atualizar}
-                                                paginas={this.state.paginas}
-                                                usuario={this.state.usuario}
-                                                controlePaginas={controlePaginas}
-                                                setarPaginaAtual={this.setarPaginaAtual}
-                                                logarUsuario={this.logarUsuario}
-                                                menuLateral={this.menuLateral}
-                                        />
-                                )
-                            }
-                        }
-    
-                        class Pagina extends React.Component {
-                            constructor(props) {
-                                super(props);
-                                this.mudarPaginaAtual = this.mudarPaginaAtual.bind(this);
-                                this.refreshDados = this.refreshDados.bind(this);
-                            }
-                            refreshDados(){
-                                this.props.refreshDados();
-                            }
-                            componentDidMount() {
-                                if(this.props.usuario.logado == false){
-                                    this.props.setarPaginaAtual("login");
-                                }else{
-                                    this.props.setarPaginaAtual("home");
-                                }
-                            }
-                            mudarPaginaAtual(pagina){
-                                this.setState({logado : false, paginaatual:pagina});
-                            }
-                            render() {
-                                const paginas = [];
-                                for (let index = 0; index < this.props.paginas.length; index++) {
-                                    paginas.push(<Submenu metodoMudar={this.mudarPaginaAtual} link={this.props.paginas[index]} />);
-                                }
-    
-                                if(this.props.usuario.logado == true){
-                                    switch (this.props.controlePaginas.atual) {
-                                    case "home":
-                                        return (
-                                            <div>
-                                                <MenuLateral
-                                                paginas={this.props.paginas}
-                                                usuario={this.props.usuario}
-                                                setarPaginaAtual={this.setarPaginaAtual}
-                                                />
-                                            </div>
-                                        )
-                                    break;
-                                    default:
-                                        return (
-                                            <div>
-                                                <MenuLateral
-                                                paginas={this.props.paginas}
-                                                usuario={this.props.usuario}
-                                                setarPaginaAtual={this.setarPaginaAtual}
-                                                />
-                                            </div>
-                                        )
-                                        break;
-                                }
-                                }else{
-                                    switch (this.props.controlePaginas.atual) {
-                                    case "home":
-                                        return (<h1>erro</h1>)
-                                    break;
-                                case "login":
-                                return (
-                                        <Login
-                                            setarPaginaAtual={this.props.setarPaginaAtual}
-                                            logarUsuario={this.props.logarUsuario}
-                                         />
-                                    )
-                                    break;
-                                    case "recoperarsenha":
-                                    return (
-                                        <Recoperarsenha
-                                            setarPaginaAtual={this.props.setarPaginaAtual}
-                                         />
-                                    )
-                                    break;
-                                    }
-                                }
-                            }
-                        }
-                        class Login extends React.Component {
-                            constructor(props) {
-                                super(props);
-                                this.paginarecoperarsenha = this.paginarecoperarsenha.bind(this);
-                                this.handleSubmit = this.handleSubmit.bind(this);
-                            }
-                            paginarecoperarsenha(){
-                                this.props.setarPaginaAtual("recoperarsenha");
-                            }
-                            handleSubmit(){
-                                let formData = new FormData(event.target);
-                                let propo = this;
-                                const xhttp = new XMLHttpRequest();
-                                xhttp.onload = function() {
-                                    let jsonRes = JSON.parse(this.responseText);
-                                    if(jsonRes.cod == 200){
-                                        localStorage.setItem("usuario",JSON.stringify(jsonRes.usuario));
-                                        propo.props.logarUsuario(JSON.stringify(jsonRes.usuario));
-                                    }
-                                }
-                                xhttp.open("POST", "https://loteria.julianoamasp.com/api/entrar");
-                                xhttp.send(formularioDataToJson(formData));
-                                event.preventDefault();
-                            }
-                            render() {
-                                return (
-                                    <div class="login-formulario">
-                                        <div class="login-formulario-card">
-                                            <form onSubmit={this.handleSubmit}>
-                                                <div class="login-formulario-container">
-                                                    <div>
-                                                        <input type="text" name="email" placeholder="Email" />
-                                                    </div>
-                                                    <div>
-                                                        <input type="password" name="senha" placeholder="Senha" />
-                                                    </div>
-                                                    <div>
-                                                        <button type="submit">Entrar</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            <div class="login-link-container">
-                                                <button onClick={this.paginarecoperarsenha}>recoperar senha</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        }
-                        class Recoperarsenha extends React.Component {
-                            constructor(props) {
-                                super(props);
-                                this.paginalogin = this.paginalogin.bind(this);
-                            }
-    
-                            paginalogin(){
-                                this.props.setarPaginaAtual("login");
-                            }
-                            render() {
-                                return (
-                                    <div class="login-formulario">
-                                        <div class="login-formulario-card">
-                                            <form action="" method="post">
-                                                <div class="login-formulario-container">
-                                                    <p>ApÃ³s fazer a solicitaÃ§Ã£o aguarde um periodo de 2 a 3 minutos, o email enviado terÃ¡ um prazo de validade de 15 minutos</p>
-                                                    <div>
-                                                        <input type="text" name="email" placeholder="Email" />
-                                                    </div>
-                                                    <div>
-                                                        <button type="submit">Entrar</button>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                            <div class="login-link-container">
-                                                <button onClick={this.paginalogin}>voltar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        }
-    
-                        class MenuLateral extends React.Component {
-                            constructor(props) {
-                                super(props);
-                                this.mudarPaginaAtual = this.mudarPaginaAtual.bind(this);
-                            }
-                            mudarPaginaAtual(pagina){
-                                this.setState({paginaatual:pagina});
-                            }
-                            render() {
-                                const paginas = [];
-                                for (let index = 0; index < this.props.paginas.length; index++) {
-                                    paginas.push(<Submenu metodoMudar={this.mudarPaginaAtual} link={this.props.paginas[index]} />);
-                                }
-    
-                                return (
-                                    <div class="menu-lateral">
-                                        <div class="menu-lateral-perfil">
-                                            <div class="menu-lateral-perfil-foto">
-                                                <img src={this.props.usuario.foto} />
-                                            </div>
-                                            <div class="menu-lateral-perfil-nome">
-                                                {this.props.usuario.nome.split(" ")[0]}
-                                            </div>
-                                        </div>
-                                        <div class="menu-lateral-corpo">
-                                            <div class="menu-lateral-links">
-                                                {paginas}
-                                            </div>
-                                            <div class="menu-lateral-footer">
-                                                <p>Desenvolvido por juliano</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )
-                            }
-                        }
-                class Componente1 extends React.Component {
-                    constructor(props) {
-                        super(props);
-                        this.state = { nome: "Juliano" }
-                    }
-                    render() {
-                        return (
-                            <div>
-                                <h1>Componente Pai</h1>
-                                <Componente2 nome={this.state.nome} />
-                            </div>
-                        )
-                    }
-                }
-    
-                class Componente2 extends React.Component {
-                    constructor(props) {
-                        super(props);
-                        this.state = { nome: this.props.nome }
-                        this.paginarecoperarsenha = this.paginarecoperarsenha.bind(this);
-                    }
-                    paginarecoperarsenha() {
-                        console.log("teste");
-                        this.setState({ nome: "teste" });
-                    }
-                    render() {
-                        return (
-                            <div>
-                                <h1>Componente filho</h1>
-                                {this.props.nome}
-                                <button onClick={this.paginarecoperarsenha}>Mudar nome</button>
-                            </div>
-                        )
-                    }
-                }
-    
-                ReactDOM.render(
-                    <Componente1 />,
-                    document.getElementById('app')
-                );*/
-            </script>
+    </script>
 </body>
 
 </html>
